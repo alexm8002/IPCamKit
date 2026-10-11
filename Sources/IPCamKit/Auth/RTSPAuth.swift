@@ -184,8 +184,10 @@ struct RTSPAuthenticator: Sendable {
     // they are RFC tokens, not quoted-strings.
     var header =
       "Digest username=\(quote(credentials.username)), realm=\(quote(state.realm)), "
-      + "nonce=\(quote(state.nonce)), uri=\(quote(uri)), algorithm=\(state.algorithm)"
-
+      + "nonce=\(quote(state.nonce)), uri=\(quote(uri))"
+    if state.algorithm.uppercased() != "MD5" {
+      header += ", algorithm=\(state.algorithm)"
+    }
     if let qop = state.qop, qopOffersAuth(qop) {
       state.nc &+= 1
       let nc = String(format: "%08x", state.nc)
